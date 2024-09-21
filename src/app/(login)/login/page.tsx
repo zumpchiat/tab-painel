@@ -95,7 +95,7 @@ export default function login() {
           </Alert>
         )}
 
-        <Box sx={{ mt: 3 }}>
+        <Box sx={{ mt: 3, textAlign: "center" }}>
           <MuiLink href="/login/forgot" variant="body2" component={Link}>
             Esqueceu sua senha???
           </MuiLink>

@@ -34,12 +34,14 @@ export async function forgotPassword(
 }
 
 export async function confirmPassword(
-  senha: string
-): Promise<{ error: string }> {
+  senha: string,
+  token: string
+): Promise<{ error: string; token: string }> {
   return new Promise((resolve) => {
     setTimeout(() => {
       resolve({
         error: "",
+        token: "",
       });
     }, 2000);
   });
