@@ -1,3 +1,4 @@
+import { Order } from "@/types/Order";
 import { resolve } from "path";
 
 export default async function api(
@@ -43,6 +44,18 @@ export async function confirmPassword(
         error: "",
         token: "",
       });
+    }, 2000);
+  });
+}
+
+export async function getOrders(): Promise<{}> {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      const orders: Order[] = [];
+
+      // montar array de pedidos
+
+      resolve(orders);
     }, 2000);
   });
 }
