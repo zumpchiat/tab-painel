@@ -1,6 +1,10 @@
 "use client";
 
-import { Grade, Refresh, Search } from "@mui/icons-material";
+import { OrderItem } from "@/components/OrderItem";
+import { changeOrderStatus, getOrders } from "@/libs/api";
+import { Order } from "@/types/Order";
+import { OrderStatus } from "@/types/OrderStatus";
+import { Refresh, Search } from "@mui/icons-material";
 import {
   Box,
   Button,
@@ -11,17 +15,37 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function Page() {
   const [searchInput, setSearchInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [orders, setOrders] = useState<Order[]>([]);
+
+  const getOrdersPage = async () => {
+    setSearchInput("");
+    setOrders([]);
+
+    setLoading(true);
+    const ordersList: Order[] = await getOrders();
+    setOrders(ordersList);
+    setLoading(false);
+  };
 
   const handleSearchInput = () => {
     //  setSearchInput(e.target.value);
   };
 
+  const handleStatusChange = async (id: number, newStatus: OrderStatus) => {
+    await changeOrderStatus(id, newStatus);
+    getOrdersPage();
+  };
+
   const handleSearchKey = () => {};
+
+  useEffect(() => {
+    getOrdersPage();
+  }, []);
 
   return (
     <>
@@ -38,6 +62,7 @@ export default function Page() {
             {loading && <CircularProgress size={24} />}
             {!loading && (
               <Button
+                onClick={getOrdersPage}
                 size="small"
                 sx={{ justifyContent: { xs: "flex-start", md: "center" } }}
               >
@@ -91,6 +116,12 @@ export default function Page() {
               </Grid>
             </>
           )}
+          {!loading &&
+            orders.map((item, index) => (
+              <Grid key={index} item xs={1}>
+                <OrderItem item={item} onChangeStatus={handleStatusChange} />
+              </Grid>
+            ))}
         </Grid>
       </Box>
     </>
