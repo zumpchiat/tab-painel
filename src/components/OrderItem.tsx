@@ -1,3 +1,4 @@
+import { dateFormat } from "@/libs/dateFormat";
 import { Order } from "@/types/Order";
 import { OrderStatus } from "@/types/OrderStatus";
 import {
@@ -51,7 +52,7 @@ export const OrderItem = ({ item, onChangeStatus }: Props) => {
         }}
       >
         <Box>
-          <Typography component={"p"}> {item.orderDate}</Typography>
+          <Typography component={"p"}> {dateFormat(item.orderDate)}</Typography>
           <Typography component={"p"}> {item.username}</Typography>
           <Button size="small" sx={{ color: "#FFF", p: 0 }}>
             Imprimir{" "}
@@ -62,6 +63,23 @@ export const OrderItem = ({ item, onChangeStatus }: Props) => {
             #{item.id}
           </Typography>
         </Box>
+      </Box>
+
+      <Box sx={{ p: 1, backgroundColor: "#FFF" }}>
+        {item.products.map((producItem, index) => (
+          <Typography
+            key={index}
+            component="p"
+            sx={{
+              p: 1,
+              color: "#000",
+              fontWeight: "bold",
+              borderBottom: "1px solid #ccc",
+            }}
+          >
+            {`${producItem.qt}x  (${producItem.product.name})`}
+          </Typography>
+        ))}
       </Box>
       <Box sx={{ p: 1, backgroundColor: "#EEE" }}>
         <Select
