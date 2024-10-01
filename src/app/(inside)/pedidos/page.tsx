@@ -2,6 +2,7 @@
 
 import { OrderItem } from "@/components/OrderItem";
 import { changeOrderStatus, getOrders } from "@/libs/api";
+import { dateFormat } from "@/libs/dateFormat";
 import { Order } from "@/types/Order";
 import { OrderStatus } from "@/types/OrderStatus";
 import { Refresh, Search } from "@mui/icons-material";
@@ -22,6 +23,7 @@ export default function Page() {
   const [loading, setLoading] = useState(false);
   const [orders, setOrders] = useState<Order[]>([]);
   const [filteredOrders, setFilteredOrders] = useState<Order[]>([]);
+  const [printerOrder, setPrinterOrder] = useState<Order | null>(null);
 
   const getOrdersPage = async () => {
     setSearchInput("");
@@ -38,6 +40,12 @@ export default function Page() {
     getOrdersPage();
   };
 
+  const handlePrintAction = (order: Order) => {
+    setPrinterOrder(order);
+    setTimeout(() => {
+      if (window) window.print();
+    }, 200);
+  };
   const handleSearchKey = (event: React.KeyboardEvent<HTMLInputElement>) => {
     console.log(event.code);
     if (
@@ -69,7 +77,7 @@ export default function Page() {
 
   return (
     <>
-      <Box sx={{ my: 3, mt: 4 }}>
+      <Box sx={{ my: 3, mt: 4, displayPrint: "none" }}>
         <Box sx={{ display: "flex", justifyContent: "space-between" }}>
           <Box sx={{ display: "flex", alignItems: "center" }}>
             <Typography
@@ -139,10 +147,59 @@ export default function Page() {
           {!loading &&
             filteredOrders.map((item, index) => (
               <Grid key={index} item xs={1}>
-                <OrderItem item={item} onChangeStatus={handleStatusChange} />
+                <OrderItem
+                  item={item}
+                  onChangeStatus={handleStatusChange}
+                  onPrint={handlePrintAction}
+                />
               </Grid>
             ))}
         </Grid>
+      </Box>
+      <Box sx={{ display: "none", displayPrint: "block" }}>
+        {printerOrder && (
+          <>
+            <Typography component={"h5"} variant="h5">
+              Pedido #{printerOrder.id}
+            </Typography>
+            <Box>Cliente: {printerOrder.username}</Box>
+            <Box>data: {dateFormat(printerOrder.orderDate)}</Box>
+
+            <Typography component={"h5"} variant="h5">
+              Itens:
+            </Typography>
+            {printerOrder.products.map((item, index) => (
+              <Box key={index}>
+                {item.qt} x {item.product.name}
+              </Box>
+            ))}
+
+            <Typography component={"h5"} variant="h5">
+              Pagamento
+            </Typography>
+            <Box>
+              Pagamento em:{" "}
+              {printerOrder.paymentType === "card" ? "Cartão" : "Dinheiro"}
+            </Box>
+            <Box>SubTotal: R$ {printerOrder.subtotal.toFixed(2)}</Box>
+            <Box>Entrega: R$ {printerOrder.shippingPrice.toFixed(2)}</Box>
+            {printerOrder.cupomDiscount && (
+              <Box> Desconto: - R$ {printerOrder.cupomDiscount.toFixed(2)}</Box>
+            )}
+            <Box>Total: R$ {printerOrder.total.toFixed(2)}</Box>
+
+            <Typography component={"h5"} variant="h5">
+              Local
+            </Typography>
+            <Box>Rua:{printerOrder.shippingAddress.address}</Box>
+            <Box>n°:{printerOrder.shippingAddress.number}</Box>
+            <Box>Obs:{printerOrder.shippingAddress.complement}</Box>
+            <Box>CEP:{printerOrder.shippingAddress.cep}</Box>
+            <Box>Bairro:{printerOrder.shippingAddress.neighborhood}</Box>
+            <Box>Cidade:{printerOrder.shippingAddress.city}</Box>
+            <Box>Estado:{printerOrder.shippingAddress.state}</Box>
+          </>
+        )}
       </Box>
     </>
   );
