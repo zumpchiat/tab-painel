@@ -124,7 +124,7 @@ export async function getCategories(): Promise<Category[]> {
 }
 
 export async function getProducts(): Promise<Product[]> {
-  const list_product: Product[] = [
+  const list: Product[] = [
     { ...tmpProduct, id: 123 },
     { ...tmpProduct, id: 124 },
     { ...tmpProduct, id: 125 },
@@ -138,7 +138,7 @@ export async function getProducts(): Promise<Product[]> {
   ];
   return new Promise((resolve) => {
     setTimeout(() => {
-      resolve(list_product);
-    }, 500);
+      resolve(list);
+    }, 50);
   });
 }

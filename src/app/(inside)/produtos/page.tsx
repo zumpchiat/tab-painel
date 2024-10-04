@@ -1,8 +1,10 @@
 "use client";
 
+import ProductTableItem from "@/components/ProductTableItem";
 import ProductTableSkeleton from "@/components/ProductTableSkeleton";
-import { getCategories } from "@/libs/api";
+import { getCategories, getProducts as getProductsAPI } from "@/libs/api";
 import { Category } from "@/types/Category";
+import { Order } from "@/types/Order";
 import { Product } from "@/types/Product";
 import {
   Box,
@@ -23,21 +25,22 @@ export default function Page() {
   const [categories, setCategories] = useState<Category[]>([]);
   const handleNewProduct = () => {};
 
+  async function getProducts() {
+    setLoading(true);
+    setProducts([]);
+    const categoryList: Category[] = await getCategories();
+    setCategories(categoryList);
+    const productList: Product[] = await getProductsAPI();
+    setProducts(productList);
+    setLoading(false);
+  }
+
+  function handleEditProduct(product: Product) {}
+  function handleDeleteProduct(product: Product) {}
+
   useEffect(() => {
     getProducts();
   }, []);
-
-  const getProducts = async () => {
-    setLoading(true);
-    const categoryList: Category[] = await getCategories();
-    setCategories(categoryList);
-    const productList: Product[] | any = await getProducts();
-    setProducts(productList);
-    console.log(productList);
-
-    setLoading(false);
-  };
-
   return (
     <>
       <Box sx={{ my: 3, mt: 4, displayPrint: "none" }}>
@@ -63,7 +66,7 @@ export default function Page() {
               <TableCell sx={{ display: { xs: "none", md: "table-cell" } }}>
                 Categoria
               </TableCell>
-              <TableCell sx={{ xs: 50, md: 130 }}>Ações</TableCell>
+              <TableCell sx={{ width: { xs: 50, md: 130 } }}>Ações</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -74,6 +77,15 @@ export default function Page() {
                 <ProductTableSkeleton />
               </>
             )}
+            {!loading &&
+              products.map((item) => (
+                <ProductTableItem
+                  key={item.id}
+                  item={item}
+                  onEdit={handleEditProduct}
+                  onDelete={handleDeleteProduct}
+                />
+              ))}
           </TableBody>
         </Table>
       </Box>
