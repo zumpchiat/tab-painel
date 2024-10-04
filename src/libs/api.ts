@@ -142,3 +142,11 @@ export async function getProducts(): Promise<Product[]> {
     }, 50);
   });
 }
+
+export async function delProduct(id: number): Promise<boolean> {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(true);
+    }, 3000);
+  });
+}

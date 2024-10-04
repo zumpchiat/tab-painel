@@ -2,13 +2,22 @@
 
 import ProductTableItem from "@/components/ProductTableItem";
 import ProductTableSkeleton from "@/components/ProductTableSkeleton";
-import { getCategories, getProducts as getProductsAPI } from "@/libs/api";
+import {
+  delProduct,
+  getCategories,
+  getProducts as getProductsAPI,
+} from "@/libs/api";
 import { Category } from "@/types/Category";
 import { Order } from "@/types/Order";
 import { Product } from "@/types/Product";
 import {
   Box,
   Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   Skeleton,
   Table,
   TableBody,
@@ -23,6 +32,10 @@ export default function Page() {
   const [loading, setLoading] = useState(false);
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [producttoDelete, setProducttoDelete] = useState<Product>();
+  const [loadingDelete, setLoadingDelete] = useState(false);
+
   const handleNewProduct = () => {};
 
   async function getProducts() {
@@ -36,11 +49,25 @@ export default function Page() {
   }
 
   function handleEditProduct(product: Product) {}
-  function handleDeleteProduct(product: Product) {}
 
   useEffect(() => {
     getProducts();
   }, []);
+
+  //Delete Product
+  function handleDeleteProduct(product: Product) {
+    setProducttoDelete(product);
+    setShowDeleteDialog(true);
+  }
+  async function handleConfirmDelete() {
+    if (producttoDelete) {
+      setLoadingDelete(true);
+      await delProduct(producttoDelete.id);
+      setLoadingDelete(false);
+      setShowDeleteDialog(false);
+      getProducts();
+    }
+  }
   return (
     <>
       <Box sx={{ my: 3, mt: 4, displayPrint: "none" }}>
@@ -88,6 +115,29 @@ export default function Page() {
               ))}
           </TableBody>
         </Table>
+
+        <Dialog
+          open={showDeleteDialog}
+          onClose={() => (!loadingDelete ? setLoadingDelete(false) : null)}
+        >
+          <DialogTitle>Deseja deletar o produto?</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              Procedimento não será desfeito.
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button disabled={loadingDelete} onClick={handleConfirmDelete}>
+              Sim
+            </Button>
+            <Button
+              disabled={loadingDelete}
+              onClick={() => setShowDeleteDialog(false)}
+            >
+              Não
+            </Button>
+          </DialogActions>
+        </Dialog>
       </Box>
     </>
   );
