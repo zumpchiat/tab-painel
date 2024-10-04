@@ -1,8 +1,13 @@
 "use client";
 
+import ProductTableSkeleton from "@/components/ProductTableSkeleton";
+import { getCategories } from "@/libs/api";
+import { Category } from "@/types/Category";
+import { Product } from "@/types/Product";
 import {
   Box,
   Button,
+  Skeleton,
   Table,
   TableBody,
   TableCell,
@@ -14,8 +19,24 @@ import { useState, useEffect } from "react";
 
 export default function Page() {
   const [loading, setLoading] = useState(false);
-
+  const [products, setProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const handleNewProduct = () => {};
+
+  useEffect(() => {
+    getProducts();
+  }, []);
+
+  const getProducts = async () => {
+    setLoading(true);
+    const categoryList: Category[] = await getCategories();
+    setCategories(categoryList);
+    const productList: Product[] | any = await getProducts();
+    setProducts(productList);
+    console.log(productList);
+
+    setLoading(false);
+  };
 
   return (
     <>
@@ -45,7 +66,15 @@ export default function Page() {
               <TableCell sx={{ xs: 50, md: 130 }}>Ações</TableCell>
             </TableRow>
           </TableHead>
-          <TableBody></TableBody>
+          <TableBody>
+            {loading && (
+              <>
+                <ProductTableSkeleton />
+                <ProductTableSkeleton />
+                <ProductTableSkeleton />
+              </>
+            )}
+          </TableBody>
         </Table>
       </Box>
     </>
