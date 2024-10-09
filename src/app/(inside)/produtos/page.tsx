@@ -2,7 +2,8 @@
 
 import ProductEditDialog from "@/components/ProductEditDialog";
 import ProductTableItem from "@/components/ProductTableItem";
-import ProductTableSkeleton from "@/components/ProductTableSkeleton";
+import ProductTableSkeleton from "@/components/ProductTableSkeleton ";
+
 import {
   createProduct,
   delProduct,
