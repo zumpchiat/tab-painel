@@ -83,7 +83,7 @@ export default function ProductEditDialog({
                 variant="standard"
                 type="number"
                 name="price"
-                defaultValue={product?.price}
+                defaultValue={product?.price.toFixed(2)}
                 required
                 fullWidth
                 disabled={disable}

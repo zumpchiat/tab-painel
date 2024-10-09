@@ -157,3 +157,19 @@ export async function delProduct(id: number): Promise<boolean> {
     }, 3000);
   });
 }
+
+export async function createProduct(form: FormData): Promise<boolean> {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(true);
+    }, 1000);
+  });
+}
+
+export async function updateProduct(form: FormData): Promise<boolean> {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(true);
+    }, 2000);
+  });
+}

@@ -4,9 +4,11 @@ import ProductEditDialog from "@/components/ProductEditDialog";
 import ProductTableItem from "@/components/ProductTableItem";
 import ProductTableSkeleton from "@/components/ProductTableSkeleton";
 import {
+  createProduct,
   delProduct,
   getCategories,
   getProducts as getProductsAPI,
+  updateProduct,
 } from "@/libs/api";
 import { Category } from "@/types/Category";
 import { Order } from "@/types/Order";
@@ -27,7 +29,7 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import { useState, useEffect } from "react";
+import { useState, useEffect, FormEvent } from "react";
 
 export default function Page() {
   const [loading, setLoading] = useState(false);
@@ -82,7 +84,20 @@ export default function Page() {
     setEditDialogOpen(true);
   };
 
-  function handleSaveEditDialog() {}
+  async function handleSaveEditDialog(event: FormEvent<HTMLFormElement>) {
+    let form = new FormData(event.currentTarget);
+
+    setLoadingEditDialog(true);
+    if (productToEdit) {
+      form.append("id", productToEdit.id.toString());
+      await updateProduct(form);
+    } else {
+      await createProduct(form);
+    }
+    setLoadingEditDialog(false);
+    setEditDialogOpen(false);
+    getProducts();
+  }
 
   return (
     <>
