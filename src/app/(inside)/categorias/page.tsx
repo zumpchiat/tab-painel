@@ -2,11 +2,16 @@
 
 import CategoryTableItem from "@/components/CategoryTableItem";
 import CategoryTableSkeleton from "@/components/CategoryTableSkeleton";
-import { getCategories } from "@/libs/api";
+import { delCategory, getCategories } from "@/libs/api";
 import { Category } from "@/types/Category";
 import {
   Box,
   Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   Table,
   TableBody,
   TableCell,
@@ -14,11 +19,15 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 
 export default function Page() {
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [categoryToDelete, setCategoryToDelete] = useState<Category>();
+  const [loadingDelete, setLoadingDelete] = useState(false);
+  const [loadingEditDialog, setLoadingEditDialog] = useState(false);
   //get category
 
   async function getCatgoryiesPage() {
@@ -34,9 +43,22 @@ export default function Page() {
   }, []);
 
   function handleNewCategory() {}
-  function handleDeleteCategory() {}
-  function handleEditCategory() {}
 
+  function handleEditCategory() {}
+  //delete category
+  function handleDeleteCategory(category: Category) {
+    setCategoryToDelete(category);
+    setShowDeleteDialog(true);
+  }
+  async function handleConfirmDelete() {
+    if (categoryToDelete) {
+      setLoadingDelete(true);
+      await delCategory(categoryToDelete.id);
+      setLoadingDelete(false);
+      setShowDeleteDialog(false);
+      getCatgoryiesPage();
+    }
+  }
   return (
     <>
       <Box sx={{ my: 3, mt: 4, displayPrint: "none" }}>
@@ -79,6 +101,29 @@ export default function Page() {
               ))}
           </TableBody>
         </Table>
+
+        <Dialog
+          open={showDeleteDialog}
+          onClose={() => (!loadingDelete ? setLoadingDelete(false) : null)}
+        >
+          <DialogTitle>Deseja deletar a categoria?</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              Procedimento não poderá ser desfeito.
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button
+              disabled={loadingDelete}
+              onClick={() => setShowDeleteDialog(false)}
+            >
+              não
+            </Button>
+            <Button disabled={loadingDelete} onClick={handleConfirmDelete}>
+              sim
+            </Button>
+          </DialogActions>
+        </Dialog>
       </Box>
     </>
   );

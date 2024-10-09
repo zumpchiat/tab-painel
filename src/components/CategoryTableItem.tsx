@@ -1,5 +1,4 @@
 import { Category } from "@/types/Category";
-import { Product } from "@/types/Product";
 import { Delete, Edit } from "@mui/icons-material";
 import { Box, Button, TableCell, TableRow, Typography } from "@mui/material";
 

@@ -173,3 +173,11 @@ export async function updateProduct(form: FormData): Promise<boolean> {
     }, 2000);
   });
 }
+
+export async function delCategory(id: number): Promise<boolean> {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(true);
+    }, 3000);
+  });
+}
