@@ -1,6 +1,9 @@
 "use client";
 
+import CategoryTableItem from "@/components/CategoryTableItem";
 import CategoryTableSkeleton from "@/components/CategoryTableSkeleton";
+import { getCategories } from "@/libs/api";
+import { Category } from "@/types/Category";
 import {
   Box,
   Button,
@@ -11,12 +14,29 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import { useState } from "react";
-
-function handleNewCategory() {}
+import { useEffect, useState } from "react";
 
 export default function Page() {
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [categories, setCategories] = useState<Category[]>([]);
+  //get category
+
+  async function getCatgoryiesPage() {
+    setLoading(false);
+    setCategories([]);
+    const listCategory: Category[] = await getCategories();
+    setCategories(listCategory);
+    setLoading(false);
+  }
+
+  useEffect(() => {
+    getCatgoryiesPage();
+  }, []);
+
+  function handleNewCategory() {}
+  function handleDeleteCategory() {}
+  function handleEditCategory() {}
+
   return (
     <>
       <Box sx={{ my: 3, mt: 4, displayPrint: "none" }}>
@@ -48,6 +68,15 @@ export default function Page() {
                 <CategoryTableSkeleton />
               </>
             )}
+            {!loading &&
+              categories.map((item) => (
+                <CategoryTableItem
+                  key={item.id}
+                  item={item}
+                  onEdit={handleEditCategory}
+                  onDelete={handleDeleteCategory}
+                />
+              ))}
           </TableBody>
         </Table>
       </Box>
