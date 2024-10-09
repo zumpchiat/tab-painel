@@ -1,5 +1,6 @@
 "use client";
 
+import ProductEditDialog from "@/components/ProductEditDialog";
 import ProductTableItem from "@/components/ProductTableItem";
 import ProductTableSkeleton from "@/components/ProductTableSkeleton";
 import {
@@ -36,7 +37,9 @@ export default function Page() {
   const [producttoDelete, setProducttoDelete] = useState<Product>();
   const [loadingDelete, setLoadingDelete] = useState(false);
 
-  const handleNewProduct = () => {};
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [productToEdit, setProductToEdit] = useState<Product>();
+  const [loadingEditDialog, setLoadingEditDialog] = useState(false);
 
   async function getProducts() {
     setLoading(true);
@@ -47,8 +50,6 @@ export default function Page() {
     setProducts(productList);
     setLoading(false);
   }
-
-  function handleEditProduct(product: Product) {}
 
   useEffect(() => {
     getProducts();
@@ -68,6 +69,21 @@ export default function Page() {
       getProducts();
     }
   }
+
+  //New/Edit Product
+
+  const handleNewProduct = () => {
+    setProductToEdit(undefined);
+    setEditDialogOpen(true);
+  };
+
+  function handleEditProduct(product: Product) {
+    setProductToEdit(product);
+    setEditDialogOpen(true);
+  }
+
+  function handleSaveEditDialog() {}
+
   return (
     <>
       <Box sx={{ my: 3, mt: 4, displayPrint: "none" }}>
@@ -138,6 +154,14 @@ export default function Page() {
             </Button>
           </DialogActions>
         </Dialog>
+        <ProductEditDialog
+          open={editDialogOpen}
+          onClose={() => setEditDialogOpen(false)}
+          onSave={handleSaveEditDialog}
+          disable={loadingEditDialog}
+          product={productToEdit}
+          categories={categories}
+        />
       </Box>
     </>
   );
