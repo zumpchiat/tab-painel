@@ -77,10 +77,10 @@ export default function Page() {
     setEditDialogOpen(true);
   };
 
-  function handleEditProduct(product: Product) {
+  const handleEditProduct = (product: Product) => {
     setProductToEdit(product);
     setEditDialogOpen(true);
-  }
+  };
 
   function handleSaveEditDialog() {}
 

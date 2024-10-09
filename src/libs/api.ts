@@ -125,7 +125,14 @@ export async function getCategories(): Promise<Category[]> {
 
 export async function getProducts(): Promise<Product[]> {
   const list: Product[] = [
-    { ...tmpProduct, id: 123 },
+    {
+      ...tmpProduct,
+      id: 123,
+      category: {
+        id: 88,
+        nome: "REFRI",
+      },
+    },
     { ...tmpProduct, id: 124 },
     { ...tmpProduct, id: 125 },
     { ...tmpProduct, id: 126 },
