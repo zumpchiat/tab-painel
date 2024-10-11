@@ -1,8 +1,14 @@
 "use client";
 
+import CategoryEditDialog from "@/components/CategoryEditDialog";
 import CategoryTableItem from "@/components/CategoryTableItem";
 import CategoryTableSkeleton from "@/components/CategoryTableSkeleton";
-import { delCategory, getCategories } from "@/libs/api";
+import {
+  createCategory,
+  delCategory,
+  getCategories,
+  updateCategory,
+} from "@/libs/api";
 import { Category } from "@/types/Category";
 import {
   Box,
@@ -19,7 +25,7 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import { use, useEffect, useState } from "react";
+import { FormEvent, use, useEffect, useState } from "react";
 
 export default function Page() {
   const [loading, setLoading] = useState(false);
@@ -27,7 +33,11 @@ export default function Page() {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [categoryToDelete, setCategoryToDelete] = useState<Category>();
   const [loadingDelete, setLoadingDelete] = useState(false);
+
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [categoryToEdit, setCategoryToEdit] = useState<Category>();
   const [loadingEditDialog, setLoadingEditDialog] = useState(false);
+
   //get category
 
   async function getCatgoryiesPage() {
@@ -42,9 +52,6 @@ export default function Page() {
     getCatgoryiesPage();
   }, []);
 
-  function handleNewCategory() {}
-
-  function handleEditCategory() {}
   //delete category
   function handleDeleteCategory(category: Category) {
     setCategoryToDelete(category);
@@ -59,6 +66,34 @@ export default function Page() {
       getCatgoryiesPage();
     }
   }
+
+  //Edit/New Category
+  function handleNewCategory() {
+    setCategoryToEdit(undefined);
+    setEditDialogOpen(true);
+  }
+
+  function handleEditCategory(categories: Category) {
+    setCategoryToEdit(categories);
+    setEditDialogOpen(true);
+  }
+
+  async function handleSaveEditDialog(event: FormEvent<HTMLFormElement>) {
+    let form = new FormData(event.currentTarget);
+
+    setLoadingEditDialog(true);
+    if (categoryToEdit) {
+      form.append("id", categoryToEdit.id.toString());
+      await updateCategory(form);
+    } else {
+      await createCategory(form);
+    }
+
+    setLoadingEditDialog(false);
+    setEditDialogOpen(false);
+    getCategories();
+  }
+
   return (
     <>
       <Box sx={{ my: 3, mt: 4, displayPrint: "none" }}>
@@ -95,7 +130,6 @@ export default function Page() {
                 <CategoryTableItem
                   key={item.id}
                   item={item}
-                  onEdit={handleEditCategory}
                   onDelete={handleDeleteCategory}
                 />
               ))}
@@ -124,6 +158,13 @@ export default function Page() {
             </Button>
           </DialogActions>
         </Dialog>
+        <CategoryEditDialog
+          open={editDialogOpen}
+          onClose={() => setEditDialogOpen(false)}
+          onSave={handleSaveEditDialog}
+          disable={loadingEditDialog}
+          category={categoryToEdit}
+        />
       </Box>
     </>
   );

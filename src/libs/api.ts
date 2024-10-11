@@ -181,3 +181,19 @@ export async function delCategory(id: number): Promise<boolean> {
     }, 3000);
   });
 }
+
+export async function updateCategory(form: FormData): Promise<boolean> {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(true);
+    }, 2000);
+  });
+}
+
+export async function createCategory(form: FormData): Promise<boolean> {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(true);
+    }, 1000);
+  });
+}

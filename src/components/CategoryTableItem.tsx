@@ -4,7 +4,7 @@ import { Box, Button, TableCell, TableRow, Typography } from "@mui/material";
 
 interface Props {
   item: Category;
-  onEdit: (item: Category) => void;
+  onEdit?: (item: Category) => void;
   onDelete: (item: Category) => void;
 }
 
@@ -23,9 +23,6 @@ export default function CategoryTableItem({ item, onEdit, onDelete }: Props) {
         </TableCell>
 
         <TableCell sx={{ width: { xs: 50, md: 130 } }}>
-          <Button onClick={() => onEdit(item)} size="small">
-            <Edit />
-          </Button>
           <Button onClick={() => onDelete(item)} size="small">
             <Delete />
           </Button>
